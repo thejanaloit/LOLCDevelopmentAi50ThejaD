@@ -107,7 +107,10 @@ export async function getSetupStatus(options = {}) {
       ok: result.ok,
       detail: result.detail,
       userAcknowledged: userMarked,
-      satisfied: result.ok || (!item.required && userMarked),
+      satisfied:
+        result.ok ||
+        (!item.required && userMarked) ||
+        (item.id === 'device_roots' && deviceRootsConfigured().dDrivePresent),
     });
   }
 
