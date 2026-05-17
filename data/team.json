@@ -17,7 +17,7 @@
       "focus": ["architecture", "full-stack", "final merge", "MCP orchestration", "multi-agent speed"],
       "lanes": ["A", "B", "C", "D"],
       "tools": ["thejana_supreme_plan", "engineering_team_roster", "swarm_init", "coordination_claim"],
-      "plugins": ["superpowers", "code-review", "claude-mem"]
+      "plugins": ["superpowers", "code-review", "claude-mem", "graphify"]
     },
     "lahiru": {
       "title": "UI / UX Engineer (FusionX)",
@@ -49,7 +49,7 @@
       "focus": ["services/*", "migrations", "Kong", "OpenAPI", "NestJS"],
       "lanes": ["C", "D"],
       "tools": ["full_stack_map", "smoke_hint"],
-      "plugins": ["code-review", "superpowers"]
+      "plugins": ["code-review", "superpowers", "graphify"]
     },
     "security": {
       "title": "White Hat Security",

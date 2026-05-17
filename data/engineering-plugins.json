@@ -34,11 +34,11 @@
     }
   ],
   "teamBindings": {
-    "thejana": ["superpowers", "code-review", "claude-mem"],
-    "lahiru": ["frontend-design", "superpowers"],
+    "thejana": ["superpowers", "code-review", "claude-mem", "graphify"],
+    "lahiru": ["frontend-design", "superpowers", "graphify"],
     "geesara": ["code-review", "superpowers"],
     "sachini": ["superpowers"],
     "security": ["claude-code-security-review", "code-review"],
-    "backend": ["code-review", "superpowers"]
+    "backend": ["code-review", "superpowers", "graphify"]
   }
 }

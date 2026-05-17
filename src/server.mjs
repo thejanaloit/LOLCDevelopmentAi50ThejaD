@@ -12,7 +12,7 @@ import { bootstrapEnv } from './env-bootstrap.mjs';
 import { getCapabilityTier, isToolAllowed } from './capability.mjs';
 import { listPrompts, getPromptContent } from './prompts-registry.mjs';
 import { listResources, readResource } from './resources-registry.mjs';
-import { buildCatalogTools, catalogToolCount } from './tool-catalog.mjs';
+import { buildCatalogTools, catalogToolCount, catalogCoreCount, catalogBulkCount } from './tool-catalog.mjs';
 import { listToolsForSession, handleTool, formatToolResult } from './tools.mjs';
 
 function getCatalog() {
@@ -156,6 +156,9 @@ async function handleCatalogTool(cat, args) {
     const area = action.replace('smoke_', '').replace('phase', 'phase');
     return formatToolResult(await handleTool('smoke_hint', { area: area === 'phase1' ? 'phase1' : area }));
   }
+  if (category === 'graphify' && action === 'index_repo') {
+    return formatToolResult(await handleTool('graphify_hint', args));
+  }
   return {
     content: [
       {
@@ -184,8 +187,11 @@ export function getServerStats() {
   return {
     tools: named.length + catalog.length,
     catalogTotal: catalogToolCount(),
+    catalogCore: catalogCoreCount(),
+    catalogBulk: catalogBulkCount(),
     prompts: listPrompts().length,
     resources: listResources().length,
     tier,
+    version: '4.0.0',
   };
 }

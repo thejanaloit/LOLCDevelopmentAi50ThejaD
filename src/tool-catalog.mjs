@@ -1,4 +1,5 @@
-/** Programmatic tool catalog (280+ tools) — Ruflo-scale surface for Cursor MCP */
+/** Programmatic tool catalog (500+ tools with bulk) — Ruflo-scale + LOLC + vendors */
+import { buildBulkTools, bulkToolCount } from './tool-catalog-bulk.mjs';
 
 const ACTIONS = {
   swarm: [
@@ -124,7 +125,7 @@ function tierForCategory(cat) {
   return 'standard';
 }
 
-export function buildCatalogTools() {
+function buildCoreCatalogTools() {
   const out = [];
   for (const [category, actions] of Object.entries(ACTIONS)) {
     for (const action of actions) {
@@ -140,6 +141,7 @@ export function buildCatalogTools() {
             input: { type: 'string', description: 'Optional parameters (JSON string or plain text)' },
             storyId: { type: 'string' },
             route: { type: 'string' },
+            path: { type: 'string' },
           },
         },
       });
@@ -148,6 +150,18 @@ export function buildCatalogTools() {
   return out;
 }
 
+export function buildCatalogTools() {
+  return [...buildCoreCatalogTools(), ...buildBulkTools()];
+}
+
 export function catalogToolCount() {
   return buildCatalogTools().length;
+}
+
+export function catalogCoreCount() {
+  return buildCoreCatalogTools().length;
+}
+
+export function catalogBulkCount() {
+  return bulkToolCount();
 }

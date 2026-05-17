@@ -1,4 +1,8 @@
+import fs from 'fs';
+import path from 'path';
+import { PACKAGE_ROOT } from './paths.mjs';
 import { loadTeam } from './team.mjs';
+import { listImportedSkillNames } from './skills-sync.mjs';
 
 const ROLE_PROMPTS = [
   { name: 'thejana_supreme_delivery', role: 'thejana', desc: 'Supreme full-stack delivery plan' },
@@ -38,6 +42,26 @@ const RUFLO_STYLE = [
   'tdd_london', 'code_review_swarm', 'cve_remediate', 'performance_profile',
 ].map((n) => ({ name: `ruflo_style_${n}`, desc: `Ruflo-class workflow: ${n}` }));
 
+const VENDOR_PROMPTS = [
+  { name: 'graphify_index_lolc', desc: 'Build Graphify knowledge graph for LOLC monorepo' },
+  { name: 'graphify_query_architecture', desc: 'Query Graphify for auth/BFF/service flow' },
+  { name: 'superpowers_brainstorm_feature', desc: 'Superpowers brainstorm before implementation' },
+  { name: 'superpowers_tdd_story', desc: 'Superpowers TDD for LOLCDL story' },
+  { name: 'claude_mem_handoff', desc: 'Persist session handoff via claude-mem' },
+  { name: 'security_review_pr_lolc', desc: 'LOLC PR security review (anthropics action)' },
+  { name: 'notebooklm_research_docs', desc: 'NotebookLM research on programme docs' },
+  { name: 'frontend_design_screen', desc: 'Official frontend-design plugin for FusionX screen' },
+  { name: 'code_review_lane', desc: 'Official code-review plugin before merge' },
+];
+
+function importedSkillPrompts() {
+  return listImportedSkillNames().map((name) => ({
+    name: `skill_${name.replace(/-/g, '_')}`,
+    description: `Imported vendor skill: ${name} (LOLC adapted)`,
+    arguments: [{ name: 'context', description: 'Route or story', required: false }],
+  }));
+}
+
 export function listPrompts() {
   const team = loadTeam();
   const teamPrompts = Object.entries(team.roles).map(([id, r]) => ({
@@ -48,13 +72,13 @@ export function listPrompts() {
     ],
   }));
 
-  const staticPrompts = [...ROLE_PROMPTS, ...WORKFLOW_PROMPTS, ...RUFLO_STYLE].map((p) => ({
+  const staticPrompts = [...ROLE_PROMPTS, ...WORKFLOW_PROMPTS, ...RUFLO_STYLE, ...VENDOR_PROMPTS].map((p) => ({
     name: p.name,
     description: p.desc,
     arguments: [{ name: 'context', description: 'Feature, route, or story id', required: false }],
   }));
 
-  return [...teamPrompts, ...staticPrompts];
+  return [...teamPrompts, ...staticPrompts, ...importedSkillPrompts()];
 }
 
 export function getPromptContent(name, args) {
@@ -68,6 +92,10 @@ export function getPromptContent(name, args) {
     multi_agent_no_collision:
       'coordination_claim → implement → docs/MULTI_AGENT_DEVELOPMENT_LOG.md append → coordination_release',
     security_hardening_dev: 'docs/security/SECURITY_FIXED.md + ALLOW_DEV_* flags in .env',
+    graphify_index_lolc: 'pip install graphifyy && graphify . from repo root (see graphify_hint tool)',
+    graphify_query_architecture: 'Query graphify-out for route → BFF → service → DB',
+    superpowers_brainstorm_feature: 'vendor/superpowers/skills/brainstorming — Phase 1 scope only',
+    security_review_pr_lolc: 'thejad/data/lolc-security-scan-instructions.txt + .github/workflows/lolc-security-review.yml',
   };
   return { name, topic, guide: guides[name] || `Execute workflow: ${name} for ${topic}` };
 }

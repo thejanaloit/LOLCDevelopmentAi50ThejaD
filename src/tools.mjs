@@ -13,7 +13,8 @@ import {
   supremePlan,
 } from './team.mjs';
 import { catalogToolCount } from './tool-catalog.mjs';
-import { engineeringTeamRoster, getPluginsStatus, installHints } from './plugins.mjs';
+import { engineeringTeamRoster, getPluginsStatus, graphifyHint, installHints } from './plugins.mjs';
+import { syncVendorSkills } from './skills-sync.mjs';
 import { listPrompts } from './prompts-registry.mjs';
 import { listResources } from './resources-registry.mjs';
 import { PACKAGE_ROOT, readJson, resolveDataDir, resolveRepoRoot } from './paths.mjs';
@@ -230,6 +231,24 @@ const ALL_TOOLS = [
     description: 'Install steps for engineering plugin bundle (PowerShell + Claude Code commands).',
     inputSchema: { type: 'object', properties: {} },
   },
+  {
+    name: 'vendors_status',
+    tier: 'core',
+    description: 'All vendor repos (graphify, superpowers, claude-mem, security-review, notebooklm) install status.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'vendor_sync_skills',
+    tier: 'core',
+    description: 'Sync vendor SKILL.md files into thejad/skills/imported for Cursor.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'graphify_hint',
+    tier: 'standard',
+    description: 'Graphify install + index LOLC monorepo as knowledge graph.',
+    inputSchema: { type: 'object', properties: { path: { type: 'string' } } },
+  },
 ];
 
 export function listToolsForSession() {
@@ -278,7 +297,7 @@ export async function handleTool(name, args) {
   switch (name) {
     case 'thejad_status':
       return {
-        version: '3.0.0',
+        version: '4.0.0',
         capabilityPercent: pct,
         fullCapacity: isFullCapacity(),
         repoRoot: resolveRepoRoot(),
@@ -532,6 +551,15 @@ export async function handleTool(name, args) {
 
     case 'plugins_install_hints':
       return installHints();
+
+    case 'vendors_status':
+      return getPluginsStatus();
+
+    case 'vendor_sync_skills':
+      return syncVendorSkills();
+
+    case 'graphify_hint':
+      return graphifyHint();
 
     default:
       return { error: `Unknown tool: ${name}` };
