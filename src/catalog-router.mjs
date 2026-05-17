@@ -5,6 +5,8 @@ const ROUTES = {
   'notebooklm.install_hint': { name: 'notebooklm_install' },
   'notebooklm.add_source': { name: 'notebooklm_add_sources' },
   'ollama.prompt': { name: 'ollama_prompt', map: (a) => ({ prompt: a.input || a.prompt, model: a.model }) },
+  'ollama.list_models': { name: 'thejad_pod_models' },
+  'ollama.pull_model': { name: 'ollama_prompt', map: (a) => ({ prompt: `pull ${a.input}` }) },
   'figma.context': { name: 'figma_context', map: (a) => ({ route: a.route || '/home' }) },
   'figma.stitch_prompt': { name: 'figma_context', map: (a) => ({ route: a.route || '/home' }) },
   'ba.story_lookup': { name: 'story_lookup', map: (a) => ({ storyId: a.storyId, route: a.route }) },
@@ -31,8 +33,8 @@ const ROUTES = {
   'agent.spawn_ui': { name: 'agent_spawn', map: (a) => ({ type: 'coder', task: a.input || 'ui' }) },
   'agent.spawn_backend': { name: 'agent_spawn', map: (a) => ({ type: 'backend-dev', task: a.input || 'api' }) },
   'agent.spawn_security': { name: 'agent_spawn', map: (a) => ({ type: 'security-auditor', task: a.input || 'security' }) },
-  'memory.store': { name: 'memory_store', map: (a) => ({ key: a.key || 'note', value: a.input || a.value || '' }) },
-  'memory.search': { name: 'memory_search', map: (a) => ({ query: a.input || a.query || '' }) },
+  'memory.store': { name: 'thejad_pod_memory_store', map: (a) => ({ key: a.key || 'note', value: a.input || a.value || '' }) },
+  'memory.search': { name: 'thejad_pod_memory_search', map: (a) => ({ query: a.input || a.query || '' }) },
   'ruflo_compat.swarm_init': { name: 'swarm_init' },
   'ruflo_compat.memory_store': { name: 'memory_store', map: (a) => ({ key: 'ruflo', value: a.input || '' }) },
   'ruflo_compat.memory_search': { name: 'memory_search', map: (a) => ({ query: a.input || '' }) },
@@ -40,12 +42,37 @@ const ROUTES = {
   'fusionx.screen_map': { name: 'lahiru_ui_review', map: (a) => ({ route: a.route || '/home' }) },
   'backend.service_health': { name: 'smoke_hint', map: () => ({ area: 'web' }) },
   'auth.login_smoke': { name: 'smoke_hint', map: () => ({ area: 'auth' }) },
-  'ollama.prompt': { name: 'ollama_prompt', map: (a) => ({ prompt: a.input || a.prompt }) },
-  'ollama.list_models': { name: 'thejad_pod_models' },
-  'memory.store': { name: 'thejad_pod_memory_store', map: (a) => ({ key: a.key || 'note', value: a.input || '' }) },
-  'memory.search': { name: 'thejad_pod_memory_search', map: (a) => ({ query: a.input || '' }) },
+  'thejad_team_pod.init': { name: 'thejad_pod_init', map: (a) => ({ name: a.input || 'team' }) },
+  'thejad_team_pod.status': { name: 'thejad_pod_status' },
+  'thejad_team_pod.peer_add': { name: 'thejad_pod_peer_add', map: (a) => ({ peerUrl: a.input || a.peerUrl }) },
+  'thejad_team_pod.models_mesh': { name: 'thejad_pod_models' },
+  'thejad_team_pod.memory_store': { name: 'thejad_pod_memory_store', map: (a) => ({ key: a.key || 'k', value: a.input || '' }) },
+  'thejad_team_pod.memory_search': { name: 'thejad_pod_memory_search', map: (a) => ({ query: a.input || '' }) },
+  'thejad_team_pod.memory_sync': { name: 'thejad_pod_memory_sync' },
+  'thejad_team_pod.agent_manifest_export': { name: 'thejad_agent_manifest_export' },
+  'thejad_team_pod.agent_manifest_apply': { name: 'thejad_agent_manifest_apply' },
+  'hyperspace_pod.status': { name: 'hyperspace_pod_status' },
+  'hyperspace_pod.create': { name: 'thejad_pod_init', map: (a) => ({ name: a.input || 'pod' }) },
+  'hyperspace_pod.join': { name: 'thejad_pod_peer_add', map: (a) => ({ peerUrl: a.input }) },
+  'hyperspace_pod.models': { name: 'thejad_pod_models' },
+  'hyperspace_pod.gateway': { name: 'hyperspace_pod_status' },
+  'hyperspace_pod.shard': { name: 'hyperspace_gateway_infer', map: (a) => ({ prompt: a.input || 'shard plan' }) },
+  'hyperspace_gateway.chat_completions': {
+    name: 'hyperspace_gateway_infer',
+    map: (a) => ({ prompt: a.input || a.prompt, model: a.model }),
+  },
+  'hyperspace_gateway.models_list': { name: 'thejad_pod_models' },
 };
 
+const HYPERSPACE_FALLBACK = { name: 'hyperspace_pod_status' };
+const TEAM_POD_FALLBACK = { name: 'thejad_pod_status' };
+
 export function resolveCatalogRoute(category, action) {
-  return ROUTES[`${category}.${action}`] || null;
+  const key = `${category}.${action}`;
+  if (ROUTES[key]) return ROUTES[key];
+  if (category === 'thejad_team_pod') return TEAM_POD_FALLBACK;
+  if (category.startsWith('hyperspace_')) return HYPERSPACE_FALLBACK;
+  if (category === 'hyperspace_provider') return HYPERSPACE_FALLBACK;
+  if (category === 'hyperspace_layer' || category === 'hyperspace_mesh') return HYPERSPACE_FALLBACK;
+  return null;
 }

@@ -123,10 +123,62 @@ const ACTIONS = {
     'ollama_models', 'fusionx_paths', 'backup_repos', 'antigravity_copy', 'postman_find',
     'docker_find', 'plans_find', 'cursor_projects', 'e_drive_scan',
   ],
+  /** pods.hyper.space — pod lifecycle (Hyperspace CLI class) */
+  hyperspace_pod: [
+    'create', 'create_cloud', 'join', 'leave', 'status', 'members', 'invite', 'invite_multi_use',
+    'models', 'resources', 'gateway', 'shard', 'shard_force', 'shard_dry_run', 'dissolve',
+    'keys_create', 'keys_list', 'keys_revoke', 'link', 'start', 'install_cli',
+  ],
+  hyperspace_coord: [
+    'status', 'members', 'balance', 'ledger', 'mint', 'revoke', 'transfer', 'credit',
+    'invite', 'redeem', 'join_cluster',
+  ],
+  hyperspace_cloud: [
+    'visibility_public', 'visibility_unlisted', 'visibility_members_only', 'visibility_invite_only',
+    'subscribe_go', 'members', 'invite', 'cap_member',
+  ],
+  hyperspace_gateway: [
+    'models_list', 'chat_completions', 'shard_plan', 'shard_activate', 'model_load',
+    'route_p2p', 'route_byok', 'route_go_pool', 'budget_check',
+  ],
+  hyperspace_models: [
+    'pull_hf', 'pull_auto', 'register_gguf', 'list', 'downloaded', 'catalog_qwen',
+    'catalog_llama', 'catalog_gemma',
+  ],
+  hyperspace_federation: [
+    'propose', 'accept', 'list', 'offer_model', 'revoke', 'alliance_pool', 'x402_pay',
+  ],
+  hyperspace_drive: [
+    'upload', 'search', 'vector_query', 's3_r2_backend', 's3_gcs_backend', 'extract_pdf',
+    'extract_docx', 'embed_gte', 'embed_ollama', 'embed_openai',
+  ],
+  hyperspace_vm: [
+    'create_oracle', 'create_hetzner', 'create_do', 'create_fly', 'status', 'destroy',
+  ],
+  hyperspace_services: [
+    'deploy_python', 'deploy_node', 'deploy_docker', 'deploy_shell', 'deploy_static',
+    'list', 'logs',
+  ],
+  hyperspace_connectors: [
+    'add_github', 'add_notion', 'add_gdrive', 'add_slack', 'add_web_crawl', 'add_s3', 'sync',
+  ],
+  hyperspace_domains: [
+    'add_custom', 'verify_dns', 'slug_subdomain',
+  ],
+  hyperspace_templates: [
+    'create', 'clone', 'list_public', 'list_unlisted',
+  ],
+  /** ThejaD LAN team pod (same-network shared memory + peer Ollama) */
+  thejad_team_pod: [
+    'init', 'status', 'peer_add', 'peer_remove', 'models_mesh', 'memory_store', 'memory_search',
+    'memory_sync', 'memory_export', 'agent_manifest_export', 'agent_manifest_apply', 'serve_sync',
+    'discover_lan',
+  ],
 };
 
 function tierForCategory(cat) {
-  if (['notebooklm', 'ollama'].includes(cat)) return 'full';
+  if (['notebooklm', 'ollama', 'hyperspace_gateway', 'hyperspace_pod'].includes(cat)) return 'full';
+  if (cat.startsWith('hyperspace_')) return 'standard';
   return 'standard';
 }
 
@@ -139,7 +191,9 @@ function buildCoreCatalogTools() {
         tier: tierForCategory(category),
         category,
         action,
-        description: `ThejaD ${category}: ${action.replace(/_/g, ' ')} (LOLC Internet Banking).`,
+        description: category.startsWith('hyperspace_') || category === 'thejad_team_pod'
+          ? `Hyperspace Pods ThejaD — ${category}: ${action.replace(/_/g, ' ')} (pods.hyper.space class).`
+          : `ThejaD ${category}: ${action.replace(/_/g, ' ')} (LOLC Internet Banking).`,
         inputSchema: {
           type: 'object',
           properties: {
