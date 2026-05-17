@@ -50,6 +50,6 @@ Usage:
   npx thejad mcp start     # run MCP server (stdio)
   npx thejad stats         # tool/prompt/resource counts
 
-GitHub: https://github.com/thejanaloit/LOLCDevelopmentAi50ThejaD
+GitHub: https://github.com/thejanaloit/ThejaD
 Thanks to Theja`);
 }

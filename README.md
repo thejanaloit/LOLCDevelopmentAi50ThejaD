@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/thejanaloit/ThejaD">GitHub</a> ·
+  <a href="https://github.com/thejanaloit/ThejaD.git">GitHub</a> ·
   <code>1000+ tools</code> ·
   <code>85+ prompts</code> ·
   <code>60+ agent patterns</code> ·
@@ -201,7 +201,7 @@ flowchart LR
 
 - **Node.js 20+**
 - **Git**
-- Internet Banking monorepo (or clone [ThejaD](https://github.com/thejanaloit/ThejaD) into your project)
+- Internet Banking monorepo (or clone [ThejaD](https://github.com/thejanaloit/ThejaD.git) into your project)
 
 ### Step 1 — One-shot setup (recommended)
 
